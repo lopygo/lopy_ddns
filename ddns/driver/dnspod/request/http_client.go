@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/lopygo/lopy_ddns/driver/dnspod/common"
-	"github.com/lopygo/lopy_ddns/driver/dnspod/config"
+	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/common"
+	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/config"
 )
 
 const apiUrl = "https://dnsapi.cn"
@@ -71,7 +71,9 @@ func (p HttpClient) Request(adapterInstance common.IAdapter) ([]byte, error) {
 	if len(p.conf.Email) > 0 {
 		email = p.conf.Email
 	}
+
 	newRequest.Header.Add("UserAgent", fmt.Sprintf("LOPY DDNS Client/0.0.0 (%s)", email))
+	newRequest.Header.Add("User-Agent", fmt.Sprintf("LOPY DDNS Client/0.0.0 (%s)", email))
 	newRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	client := &http.Client{}

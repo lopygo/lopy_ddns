@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lopygo/lopy_ddns/driver/dnspod/common"
+	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/common"
 )
 
 // quote: https://docs.dnspod.cn/api/5f562ae4e75cf42d25bf689e/

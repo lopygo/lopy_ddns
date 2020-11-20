@@ -24,9 +24,5 @@ type ListResult struct {
 func ListResultFromBuffer(buf []byte) (ListResult, error) {
 	r := ListResult{}
 	err := json.Unmarshal(buf, &r)
-	if err != nil {
-		return r, err
-	}
-
 	return r, err
 }
