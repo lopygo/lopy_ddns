@@ -10,6 +10,8 @@ import (
 	"golang.org/x/text/transform"
 )
 
+var _ common.IDriver = new(IpDriver)
+
 const resolveUrl = "https://pv.sohu.com/cityjson"
 
 type IpDriver struct {

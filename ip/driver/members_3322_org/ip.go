@@ -7,6 +7,8 @@ import (
 	"github.com/lopygo/lopy_ddns/ip/driver/common"
 )
 
+var _ common.IDriver = new(IpDriver)
+
 const resolveUrl = "http://members.3322.org/dyndns/getip"
 
 type IpDriver struct {

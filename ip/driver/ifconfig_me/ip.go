@@ -4,6 +4,8 @@ import "github.com/lopygo/lopy_ddns/ip/driver/common"
 
 const resolveUrl = "https://ifconfig.me"
 
+var _ common.IDriver = new(IpDriver)
+
 type IpDriver struct {
 }
 

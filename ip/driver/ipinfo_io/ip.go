@@ -6,6 +6,8 @@ import (
 	"github.com/lopygo/lopy_ddns/ip/driver/common"
 )
 
+var _ common.IDriver = new(IpDriver)
+
 const resolveUrl = "https://ipinfo.io"
 
 type IpDriver struct {

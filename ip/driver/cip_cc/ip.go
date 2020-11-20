@@ -9,6 +9,8 @@ import (
 
 const resolveUrl = "https://cip.cc"
 
+var _ common.IDriver = new(IpDriver)
+
 type IpDriver struct {
 }
 
