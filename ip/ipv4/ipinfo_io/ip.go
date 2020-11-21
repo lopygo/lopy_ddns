@@ -3,7 +3,7 @@ package ipinfo_io
 import (
 	"encoding/json"
 
-	"github.com/lopygo/lopy_ddns/ip/driver/common"
+	"github.com/lopygo/lopy_ddns/ip/common"
 )
 
 var _ common.IDriver = new(IpDriver)

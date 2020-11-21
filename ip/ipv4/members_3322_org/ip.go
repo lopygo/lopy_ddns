@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/lopygo/lopy_ddns/ip/driver/common"
+	"github.com/lopygo/lopy_ddns/ip/common"
 )
 
 var _ common.IDriver = new(IpDriver)

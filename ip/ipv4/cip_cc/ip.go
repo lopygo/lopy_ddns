@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/lopygo/lopy_ddns/ip/driver/common"
+	"github.com/lopygo/lopy_ddns/ip/common"
 )
 
 const resolveUrl = "https://cip.cc"

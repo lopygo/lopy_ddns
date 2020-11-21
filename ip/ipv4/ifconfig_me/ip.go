@@ -1,6 +1,6 @@
 package ifconfig_me
 
-import "github.com/lopygo/lopy_ddns/ip/driver/common"
+import "github.com/lopygo/lopy_ddns/ip/common"
 
 const resolveUrl = "https://ifconfig.me"
 

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/lopygo/lopy_ddns/ip/driver/common"
+	"github.com/lopygo/lopy_ddns/ip/common"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 )
