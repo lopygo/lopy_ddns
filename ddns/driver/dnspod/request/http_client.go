@@ -73,7 +73,8 @@ func (p HttpClient) Request(adapterInstance common.IAdapter) ([]byte, error) {
 	}
 
 	newRequest.Header.Add("UserAgent", fmt.Sprintf("LOPY DDNS Client/0.0.0 (%s)", email))
-	newRequest.Header.Add("User-Agent", fmt.Sprintf("LOPY DDNS Client/0.0.0 (%s)", email))
+	// 这句不能要
+	// newRequest.Header.Add("User-Agent", fmt.Sprintf("LOPY DDNS Client/0.0.0 (%s)", email))
 	newRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	client := &http.Client{}

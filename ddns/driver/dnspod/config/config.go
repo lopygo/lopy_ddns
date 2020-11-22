@@ -1,12 +1,12 @@
 package config
 
 type Config struct {
-	TokenId      string
-	Token        string
+	TokenId string
+	Token   string
+	// Email 参见 [关于UserAgent] https://docs.dnspod.cn/api/5f55993d8ae73e11c5b01ce6/
+	Email        string
 	Lang         string
 	ErrorOnEmpty bool
-	// Email 参见 [关于UserAgent] https://docs.dnspod.cn/api/5f55993d8ae73e11c5b01ce6/
-	Email string
 }
 
 func NewConfigDefault() Config {

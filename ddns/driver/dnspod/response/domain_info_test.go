@@ -84,6 +84,8 @@ func TestListResultFromBuffer(t *testing.T) {
 						Type:   "A",
 						Status: "enabled",
 						Value:  "1.10.0.3",
+						Line:   "电信",
+						LineID: "10=0",
 					},
 				},
 			},

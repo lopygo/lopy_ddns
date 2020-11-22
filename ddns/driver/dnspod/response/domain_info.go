@@ -5,8 +5,8 @@ import (
 )
 
 type DomainInfo struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID   json.Number `json:"id"`
+	Name string      `json:"name"`
 	// Punycode  string   `json:"punycode"`
 	// Grade     string   `json:"grade"`
 	// Owner     string   `json:"owner"`

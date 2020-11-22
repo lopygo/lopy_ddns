@@ -8,11 +8,11 @@ import (
 type IDriver interface {
 	UpdateBefore() error
 
-	Update() error
+	Update(string) error
 
 	UpdateAfter() error
 
-	ResolveIp() (IPModel, err error)
+	ResolveIp() (ip []string, err error)
 }
 
 // ADriver
@@ -29,19 +29,18 @@ func (p *ADriver) Host() string {
 	return p.lookupHost
 }
 
-func (p *ADriver) ResolveIp() (IPModel, error) {
-	m := IPModel{}
+func (p *ADriver) ResolveIp() ([]string, error) {
+	// m := IPModel{}
 	addr, err := net.LookupIP(p.Host())
 	if err != nil {
-		return m, err
+		return nil, err
 	}
 
 	l := make([]string, 0)
 	// 暂时不考虑ipv6
 	for _, v := range addr {
 		l = append(l, v.String())
-		m.IPV4 = v.String()
 	}
 
-	return m, nil
+	return l, nil
 }
