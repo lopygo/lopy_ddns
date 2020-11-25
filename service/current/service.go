@@ -10,7 +10,7 @@ var _currentData *current2.CurrentModel
 
 var _once sync.Once
 
-func CurrentModel() *current2.CurrentModel {
+func CurrentModelService() *current2.CurrentModel {
 	_once.Do(func() {
 		_currentData = current2.NewCurrentModel()
 	})

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/common"
 	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/config"
@@ -77,13 +78,15 @@ func (p HttpClient) Request(adapterInstance common.IAdapter) ([]byte, error) {
 	// newRequest.Header.Add("User-Agent", fmt.Sprintf("LOPY DDNS Client/0.0.0 (%s)", email))
 	newRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Duration(5) * time.Second,
+	}
 	// client.do
 	r, err := client.Do(newRequest)
-	defer r.Body.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer r.Body.Close()
 	// err
 
 	// this status code

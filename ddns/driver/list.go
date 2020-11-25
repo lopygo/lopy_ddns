@@ -12,5 +12,6 @@ func ListAvailable() map[string]DriverCreator {
 
 	l := make(map[string]DriverCreator, 0)
 	l["dnspod"] = dnspod.LoadFromDriverConfig
+	l["dnspod.cn"] = dnspod.LoadFromDriverConfig
 	return l
 }

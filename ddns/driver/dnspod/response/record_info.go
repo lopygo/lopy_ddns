@@ -22,8 +22,8 @@ type RecordInfo struct {
 }
 
 type ModifyResult struct {
-	Status Status     `json:status`
-	Record RecordInfo `json:record`
+	Status Status     `json:"status"`
+	Record RecordInfo `json:"record"`
 }
 
 func ModifyResultFromBuffer(buf []byte) (ModifyResult, error) {

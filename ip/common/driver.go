@@ -8,6 +8,9 @@ type IDriver interface {
 }
 
 func IsIpv4(ip string) bool {
+	if len(ip) < 7 {
+		return false
+	}
 	match, err := regexp.MatchString(`^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))$`, ip)
 	if err != nil {
 		return false
@@ -17,6 +20,9 @@ func IsIpv4(ip string) bool {
 }
 
 func IsIpv6(ip string) bool {
+	if len(ip) < 3 {
+		return false
+	}
 	match, err := regexp.MatchString(`^([a-f0-9]{1,4}(:[a-f0-9]{1,4}){7}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){0,7}::[a-f0-9]{0,4}(:[a-f0-9]{1,4}){0,7})$`, ip)
 	if err != nil {
 		return false
@@ -24,11 +30,3 @@ func IsIpv6(ip string) bool {
 
 	return match
 }
-
-// type IIPV4 interface {
-// 	IsIpv4(ip string) bool
-// }
-
-// type IIPV6 interface {
-// 	IsIpv6(ip string) bool
-// }

@@ -16,9 +16,9 @@ type DomainInfo struct {
 }
 
 type ListResult struct {
-	Status  Status       `json:status`
-	Domain  DomainInfo   `json:domain`
-	Records []RecordInfo `json:records`
+	Status  Status       `json:"status"`
+	Domain  DomainInfo   `json:"domain"`
+	Records []RecordInfo `json:"records"`
 }
 
 func ListResultFromBuffer(buf []byte) (ListResult, error) {

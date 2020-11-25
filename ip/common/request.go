@@ -14,7 +14,7 @@ func DoRequest(requestUrl string) ([]byte, error) {
 	newRequest.Header.Add("User-Agent", "curl/7.64.0")
 
 	client := &http.Client{
-		Timeout: time.Duration(3) * time.Second,
+		Timeout: time.Duration(5) * time.Second,
 	}
 	r, err := client.Do(newRequest)
 

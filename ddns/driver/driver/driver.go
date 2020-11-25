@@ -2,6 +2,7 @@ package driver
 
 import (
 	"net"
+	"time"
 )
 
 // IDriver
@@ -12,35 +13,55 @@ type IDriver interface {
 
 	UpdateAfter() error
 
-	ResolveIp() (ip []string, err error)
+	ResolveIp() (ip string, err error)
+
+	Host() string
+
+	LastIP() string
+
+	LastUpdateTime() time.Time
 }
 
 // ADriver
 type ADriver struct {
 	lookupHost string
+
+	lastIP string
+
+	lastUpdateTime time.Time
+}
+
+func (p *ADriver) LastIP() string {
+	return p.lastIP
+}
+
+func (p *ADriver) SetLastIP(ip string) {
+	p.lastIP = ip
 }
 
 // SetHost
 func (p *ADriver) SetHost(host string) {
 	p.lookupHost = host
+	p.lastUpdateTime = time.Now()
 }
 
 func (p *ADriver) Host() string {
 	return p.lookupHost
 }
 
-func (p *ADriver) ResolveIp() ([]string, error) {
+func (p *ADriver) LastUpdateTime() time.Time {
+	return p.lastUpdateTime
+}
+
+func (p *ADriver) ResolveIp() (string, error) {
 	// m := IPModel{}
 	addr, err := net.LookupIP(p.Host())
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	l := make([]string, 0)
-	// 暂时不考虑ipv6
-	for _, v := range addr {
-		l = append(l, v.String())
-	}
-
-	return l, nil
+	// 只取第一个
+	ip := string(addr[0])
+	p.SetLastIP(ip)
+	return ip, nil
 }
