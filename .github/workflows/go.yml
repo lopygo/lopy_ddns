@@ -36,7 +36,7 @@ jobs:
     #   run: go test -v ./...
       
     - name: App version
-      run: export APP_VERSION=v${{ steps.tagName.outputs.tag }}
+      run: echo "APP_VERSION=v${{ steps.tagName.outputs.tag }}" >> $GITHUB_ENV
       
     - run: apt update
     - run: apt install upx -y
