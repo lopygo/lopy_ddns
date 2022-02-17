@@ -1,0 +1,55 @@
+@apiUrl = https://dnsapi.cn
+
+POST {{apiUrl}}/Record.List HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+UserAgent: LOPY DDNS Client/0.0.0 (243377582@qq.com)
+
+format=json
+&login_token={{$dotenv LOGIN_ID}},{{$dotenv LOGIN_TOKEN}}
+&domain=lopygo.com
+
+
+###
+
+POST {{apiUrl}}/Record.Info
+Content-Type: application/x-www-form-urlencoded
+UserAgent: LOPY DDNS Client/0.0.0 (243377582@qq.com)
+
+format=json
+&login_token={{$dotenv LOGIN_ID}},{{$dotenv LOGIN_TOKEN}}
+&domain=lopygo.com
+&record_id=676579271
+
+
+###
+
+POST {{apiUrl}}/Record.Modify
+Content-Type: application/x-www-form-urlencoded
+UserAgent: LOPY DDNS Client/0.0.0 (243377582@qq.com)
+
+format=json
+&login_token={{$dotenv LOGIN_ID}},{{$dotenv LOGIN_TOKEN}}
+&domain=lopygo.com
+&record_id=676579271
+&sub_domain=
+&record_type=A
+&record_line_id=0
+&value=123.234.123.234
+&mx=0
+
+
+###
+
+POST {{apiUrl}}/Record.Ddns
+Content-Type: application/x-www-form-urlencoded
+UserAgent: LOPY DDNS Client/0.0.0 (243377582@qq.com)
+
+format=json
+&login_token={{$dotenv LOGIN_ID}},{{$dotenv LOGIN_TOKEN}}
+&domain=lopygo.com
+&record_id=676579271
+&sub_domain=lopygohome
+&record_line_id=0
+&value=123.234.123.23
+
+
