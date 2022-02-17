@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"time"
 
@@ -14,6 +16,7 @@ import (
 
 	"github.com/lopygo/lopy_ddns/ip/common"
 	"github.com/lopygo/lopy_ddns/model/current"
+	"github.com/lopygo/lopy_ddns/service/about"
 	currentService "github.com/lopygo/lopy_ddns/service/current"
 	"github.com/lopygo/lopy_ddns/service/driver_list"
 )
@@ -21,8 +24,29 @@ import (
 var loopLocker sync.Mutex
 
 func main() {
-	fmt.Println("client simple")
 
+	aboutModel, err := about.FromInput()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	showV := flag.Bool("v", false, "version")
+	flag.Parse()
+	if *showV {
+		l := make([]string, 0)
+		l = append(l, fmt.Sprintf("%s\t%s", aboutModel.AppName, aboutModel.AppVersion))
+		l = append(l, "\n")
+		l = append(l, fmt.Sprintf("Built Time:\t%s", aboutModel.BuildTime))
+		l = append(l, fmt.Sprintf("Git Commit:\t%s", aboutModel.GITCommit))
+		l = append(l, fmt.Sprintf("Built Go:\t%s", aboutModel.BuildGoVersion))
+		l = append(l, fmt.Sprintf("Website:\t%s", aboutModel.WebSite))
+
+		fmt.Println(strings.Join(l, "\n"))
+		return
+	}
+
+	fmt.Println("client simple")
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// current data
