@@ -9,6 +9,9 @@ buildDate := `date +%Y-%m-%d" "%H:%M:%S`
 goVersion := `go version|awk '{print $$3,$$4}'`
 gitCommit := `git rev-parse HEAD`
 webSite := lopygo.com
+targetOs := `go env GOOS`
+targetArch := `go env GOARCH`
+targetExt := `go env GOEXE`
 
 all: 
 
@@ -47,7 +50,7 @@ gobuild:
 		-X \"${pkgName}/service/about.gitCommit=${gitCommit}\" \
 		-X \"${pkgName}/service/about.webSite=${webSite}\" \
 	" \
-	-o ./dist/lopy_ddns \
+	-o ./dist/lopy_ddns_${targetOs}_${targetArch}${targetExt} \
 	./cmd/client/main.go
 
 gogen:
