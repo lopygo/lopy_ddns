@@ -45,7 +45,6 @@ jobs:
       env:
         GOARCH: amd64
         GOOS: linux
-        APP_VERSION: ${{ env.APP_VERSION }}
       run: |
         make build
         upx -9 ./dist/lopy_ddns_linux_amd64
