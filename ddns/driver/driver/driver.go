@@ -7,13 +7,15 @@ import (
 
 // IDriver
 type IDriver interface {
+	Init() error
+
 	UpdateBefore() error
 
 	Update(string) error
 
 	UpdateAfter() error
 
-	ResolveIp() (ip string, err error)
+	ResolveIP() (ip string, err error)
 
 	Host() string
 
@@ -53,7 +55,7 @@ func (p *ADriver) LastUpdateTime() time.Time {
 	return p.lastUpdateTime
 }
 
-func (p *ADriver) ResolveIp() (string, error) {
+func (p *ADriver) ResolveIP() (string, error) {
 	// m := IPModel{}
 	addr, err := net.LookupIP(p.Host())
 	if err != nil {
@@ -61,7 +63,8 @@ func (p *ADriver) ResolveIp() (string, error) {
 	}
 
 	// 只取第一个
-	ip := string(addr[0])
+	ip := addr[0].String()
+
 	p.SetLastIP(ip)
 	return ip, nil
 }

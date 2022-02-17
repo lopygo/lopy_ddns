@@ -18,9 +18,9 @@ func NewConfigDefault() Config {
 	}
 }
 
-func NewConfig(id string, token string) Config {
+func NewConfig(tokenID string, token string) Config {
 	d := NewConfigDefault()
-	d.TokenId = id
+	d.TokenId = tokenID
 	d.Token = token
 	return d
 }

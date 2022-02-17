@@ -1,6 +1,7 @@
 package request
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -8,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/common"
+	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/adapter/record"
 	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/config"
 )
 
@@ -27,11 +28,11 @@ func NewHttpClient(conf *config.Config) *HttpClient {
 	return i
 }
 
-func (p HttpClient) Request(adapterInstance common.IAdapter) ([]byte, error) {
+func (p HttpClient) Request(adapterInstance record.IAdapter) (buf []byte, err error) {
 
 	u, err := url.ParseRequestURI(apiUrl)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	// data
@@ -41,10 +42,10 @@ func (p HttpClient) Request(adapterInstance common.IAdapter) ([]byte, error) {
 	// check
 	err = adapterInstance.Check()
 	if err != nil {
-		return nil, err
+		return
 	}
 	//// adapter data
-	for k, v := range adapterInstance.GetData() {
+	for k, v := range adapterInstance.GetPostData() {
 		postData.Set(k, v)
 	}
 
@@ -65,7 +66,7 @@ func (p HttpClient) Request(adapterInstance common.IAdapter) ([]byte, error) {
 	fmt.Println(u.String())
 	newRequest, err := http.NewRequest("POST", u.String(), strings.NewReader(postData.Encode()))
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	email := "example@example.cn"
@@ -95,10 +96,30 @@ func (p HttpClient) Request(adapterInstance common.IAdapter) ([]byte, error) {
 	}
 	// return
 
-	buf, err := ioutil.ReadAll(r.Body)
+	buf, err = ioutil.ReadAll(r.Body)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return buf, nil
+	// res
+
+	res := record.Response{}
+	err = json.Unmarshal(buf, &res)
+	if err != nil {
+		return
+	}
+
+	code, err := res.Status.Code.Int64()
+	if err != nil {
+		return
+	}
+
+	if code != 1 {
+		err = fmt.Errorf("api error: %v", res.Status.Message)
+		return
+	}
+
+	err = adapterInstance.SetResponseJson(buf)
+	return
+
 }

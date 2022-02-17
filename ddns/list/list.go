@@ -53,7 +53,7 @@ func (p *DriverList) UpdateIpv6(ip string) {
 
 func UpdateDDNS(driverInstance driver.IDriver, ip string) error {
 
-	oldIp, err := driverInstance.ResolveIp()
+	oldIp, err := driverInstance.ResolveIP()
 	if err != nil {
 		return err
 	}

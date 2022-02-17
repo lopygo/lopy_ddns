@@ -8,7 +8,6 @@ import (
 	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/adapter/record"
 	configClient "github.com/lopygo/lopy_ddns/ddns/driver/dnspod/config"
 	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/request"
-	"github.com/lopygo/lopy_ddns/ddns/driver/dnspod/response"
 	"github.com/lopygo/lopy_ddns/ddns/driver/driver"
 	"github.com/mitchellh/mapstructure"
 )
@@ -22,79 +21,49 @@ type Client struct {
 
 	extConfig ExtConfig
 
-	request *request.HttpClient
+	// request *request.HttpClient
 
-	dataDomain response.DomainInfo
+	dataDomain *Domain
 
-	dataRecord response.RecordInfo
+	dataRecord *Record
+
+	requestClient func() *request.HttpClient
 }
+
+// func (p *Client) requestClient() *request.HttpClient {
+
+// }
 
 // UpdateBefore 这一步是为了取得 recordId 和 domain id
 func (p *Client) UpdateBefore() error {
 
-	adap := &record.ListAdapter{
-		Domain: p.config.Domain,
-	}
-
-	buf, err := p.request.Request(adap)
-	if err != nil {
-		return err
-	}
-
-	res, err := response.ListResultFromBuffer(buf)
-
-	if err != nil {
-		return err
-	}
-	p.dataDomain = res.Domain
-
-	// sub main
-	line := strings.Trim(p.extConfig.Line, " ")
-	if len(line) == 0 {
-		line = "默认"
-	}
-	for _, v := range res.Records {
-		if p.config.SubDomain == v.Name && v.Line == line {
-			p.dataRecord = v
-			break
-		}
-	}
-
-	if p.dataRecord == (response.RecordInfo{}) {
-		return fmt.Errorf(
-			"the is no this record {sub_domain: \"%s\" , line: \"%s\"}",
-			p.config.SubDomain,
-			line,
-		)
-	}
-
 	return nil
 }
 
-func (p *Client) Update(ip string) error {
-
-	adap := &record.ModifyAdapter{
-		DomainID:     string(p.dataDomain.ID),
-		RecordID:     string(p.dataRecord.ID),
-		SubDomain:    p.config.SubDomain,
-		RecordLine:   p.dataRecord.Line,
-		RecordLineID: p.dataRecord.LineID,
+func (p *Client) Update(ip string) (err error) {
+	if p.dataDomain == nil {
+		err = fmt.Errorf("domain 不能为空")
+		return
 	}
 
-	adap.SetValue(ip, p.config.GetType())
+	if p.dataRecord == nil {
+		err = fmt.Errorf("record 不能为空")
+		return
+	}
 
-	buf, err := p.request.Request(adap)
+	adap := &record.DdnsAdapter{
+		RecordID:  p.dataRecord.ID,
+		SubDomain: p.config.SubDomain,
+	}
+	adap.SetDomainID(p.dataDomain.ID)
+	adap.SetValue(ip)
+
+	_, err = p.requestClient().Request(adap)
 	if err != nil {
 		return err
 	}
 
-	modifyRes, err := response.ModifyResultFromBuffer(buf)
-	if err != nil {
-		return err
-	}
-	if modifyRes.Status.Code != "1" {
-		return fmt.Errorf("update ip error: %s", modifyRes.Status.Message)
-	}
+	modifyRes := adap.Response()
 	fmt.Println(modifyRes)
 
 	return nil
@@ -105,13 +74,104 @@ func (p *Client) UpdateAfter() error {
 	return nil
 }
 
+func (p *Client) ResolveIP() (ip string, err error) {
+	if p.dataDomain == nil {
+		err = fmt.Errorf("domain 不能为空")
+		return
+	}
+
+	if p.dataRecord == nil {
+		err = fmt.Errorf("record 不能为空")
+		return
+	}
+
+	l := record.InfoAdapter{}
+	l.SetDomainID(p.dataDomain.ID)
+	l.RecordID = p.dataRecord.ID
+
+	_, err = p.requestClient().Request(&l)
+	if err != nil {
+		return
+	}
+
+	ip = l.Response().Record.Value
+	return
+}
+
+func (p *Client) Init() error {
+	adap := &record.ListAdapter{}
+
+	adap.SetDomain(p.config.Domain)
+	adap.SubDomain = p.config.SubDomain
+	_, err := p.requestClient().Request(adap)
+	if err != nil {
+		return err
+	}
+
+	// domain
+	res := adap.Response()
+	domainId, err := res.Domain.ID.Int64()
+	if err != nil {
+		return err
+	}
+	p.dataDomain = &Domain{
+		ID:     int(domainId),
+		Domain: res.Domain.Domain,
+	}
+
+	//
+
+	// sub main
+	line := strings.Trim(p.extConfig.Line, " ")
+	if len(line) == 0 {
+		line = "默认"
+	}
+
+	//
+	for _, v := range res.Records {
+		if p.config.SubDomain == v.SubDomain && v.Line == line {
+
+			recordId, err := v.ID.Int64()
+			if err != nil {
+				continue
+			}
+			p.dataRecord = &Record{
+				ID:        int(recordId),
+				SubDomain: v.SubDomain,
+				Value:     v.Value,
+			}
+			break
+		}
+	}
+
+	//
+	if p.dataRecord == nil {
+		// this can create
+		//
+
+		return fmt.Errorf(
+			"the is no this record {sub_domain: \"%s\" , line: \"%s\"}",
+			p.config.SubDomain,
+			line,
+		)
+	}
+
+	return nil
+}
+
 func LoadFromDriverConfig(conf config.Driver) (driver.IDriver, error) {
 
 	c := new(Client)
 	c.config = conf
-	clientConf := configClient.NewConfig(conf.Username, conf.Password)
-	client := request.NewHttpClient(&clientConf)
-	c.request = client
+
+	c.requestClient = func() *request.HttpClient {
+		clientConf := configClient.NewConfig(conf.Username, conf.Password)
+		client := request.NewHttpClient(&clientConf)
+		return client
+	}
+
+	c.requestClient()
+
 	e, err := ExtConfigLoad(conf.Ext)
 	if err != nil {
 		return nil, err
@@ -138,4 +198,14 @@ func ExtConfigLoad(conf map[string]interface{}) (ExtConfig, error) {
 	c := ExtConfigDeafult()
 	err := mapstructure.Decode(conf, &c)
 	return c, err
+}
+
+type Domain struct {
+	ID     int
+	Domain string
+}
+type Record struct {
+	ID        int
+	SubDomain string
+	Value     string
 }
