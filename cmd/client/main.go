@@ -10,9 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/lopygo/lopy_ddns/ip/ipv4/ifconfig_me"
 	"github.com/lopygo/lopy_ddns/ip/ipv6/test_ipv6"
-
-	"github.com/lopygo/lopy_ddns/ip/ipv4/sohu"
 
 	"github.com/lopygo/lopy_ddns/ip/common"
 	"github.com/lopygo/lopy_ddns/model/current"
@@ -130,7 +129,7 @@ func getPublicIp() {
 
 	// init address of ipv4 and ipv6
 	// default use sohu in ipv4
-	go getCurrentIP(&sohu.IpDriver{})
+	go getCurrentIP(&ifconfig_me.IpDriver{})
 	// default use test_ipv6 in ipv6
 	go getCurrentIP(&test_ipv6.IpDriver{})
 
@@ -149,6 +148,12 @@ func getCurrentIP(i common.IDriver) {
 
 	// set ip
 	if common.IsIpv4(ip) {
+
+		if ip == "127.0.0.1" {
+			fmt.Println("ip is localhost:::????")
+			return
+		}
+
 		currentService.CurrentModelService().SetIPV4(ip)
 	} else if common.IsIpv6(ip) {
 		currentService.CurrentModelService().SetIPV6(ip)

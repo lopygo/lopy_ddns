@@ -14,6 +14,8 @@ func TestIpDriver_Resolve(t *testing.T) {
 			r, err := ipDriver.Resolve()
 
 			So(err, ShouldBeNil)
+
+			t.Logf("ip: %s", r)
 			So(len(r), ShouldBeLessThanOrEqualTo, 15)
 			So(len(r), ShouldBeGreaterThanOrEqualTo, 7)
 		})

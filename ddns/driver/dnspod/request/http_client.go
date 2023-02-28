@@ -79,9 +79,12 @@ func (p HttpClient) Request(adapterInstance record.IAdapter) (buf []byte, err er
 	// newRequest.Header.Add("User-Agent", fmt.Sprintf("LOPY DDNS Client/0.0.0 (%s)", email))
 	newRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	client := &http.Client{
-		Timeout: time.Duration(5) * time.Second,
-	}
+	// client := &http.Client{
+	// 	Timeout: time.Duration(5) * time.Second,
+	// }
+
+	client := http.DefaultClient
+	client.Timeout = time.Duration(5) * time.Second
 	// client.do
 	r, err := client.Do(newRequest)
 	if err != nil {
